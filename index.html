@@ -1,0 +1,1528 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="description" content="Flashcard kosakata Mandarin yang kamu isi sendiri, untuk persiapan HSK." />
+    <title>Flashcard Hanzi</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@500;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" />
+    <style>
+      /* Layout: one narrow column like a stack of index cards; tabs on top, the study card is the hero. */
+      :root {
+        --bg: #f3f5f4;
+        --surface: #ffffff;
+        --ink: #1b2422;
+        --muted: #5d6b67;
+        --line: #d9e0dd;
+        --jade: #1d6b57;
+        --jade-soft: #e1efe9;
+        --seal: #b8322a;
+        --seal-soft: #f8e4e1;
+        --shadow: 0 1px 2px rgba(20, 40, 35, 0.06), 0 8px 24px rgba(20, 40, 35, 0.08);
+        --f-hanzi: "Noto Serif SC", "Songti SC", "SimSun", serif;
+        --f-body: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root:not([data-theme="light"]) {
+          --bg: #121816;
+          --surface: #1b2321;
+          --ink: #e8eeec;
+          --muted: #9aaba6;
+          --line: #2e3a37;
+          --jade: #5cc0a1;
+          --jade-soft: #1f3530;
+          --seal: #ef7a6f;
+          --seal-soft: #3a2422;
+          --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px rgba(0, 0, 0, 0.35);
+          color-scheme: dark;
+        }
+      }
+      :root[data-theme="dark"] {
+        --bg: #121816;
+        --surface: #1b2321;
+        --ink: #e8eeec;
+        --muted: #9aaba6;
+        --line: #2e3a37;
+        --jade: #5cc0a1;
+        --jade-soft: #1f3530;
+        --seal: #ef7a6f;
+        --seal-soft: #3a2422;
+        --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px rgba(0, 0, 0, 0.35);
+        color-scheme: dark;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        background: var(--bg);
+        color: var(--ink);
+        font-family: var(--f-body);
+        font-size: 15px;
+        line-height: 1.5;
+      }
+      .wrap {
+        max-width: 560px;
+        margin: 0 auto;
+        padding-block: 20px 48px;
+        padding-left: max(16px, env(safe-area-inset-left, 0px));
+        padding-right: max(16px, env(safe-area-inset-right, 0px));
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+      }
+      header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .seal {
+        width: 44px;
+        height: 44px;
+        flex: none;
+        border-radius: 8px;
+        background: var(--seal);
+        color: #fff;
+        display: grid;
+        place-items: center;
+        font-family: var(--f-hanzi);
+        font-weight: 700;
+        font-size: 24px;
+        transform: rotate(-4deg);
+      }
+      h1 {
+        font-size: 20px;
+        margin: 0;
+        letter-spacing: -0.01em;
+        text-wrap: balance;
+      }
+      .sub {
+        color: var(--muted);
+        font-size: 13px;
+        margin: 0;
+      }
+      .stats {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        font-size: 13px;
+        font-variant-numeric: tabular-nums;
+      }
+      .chip {
+        padding: 3px 10px;
+        border-radius: 999px;
+        background: var(--surface);
+        border: 1px solid var(--line);
+        color: var(--muted);
+      }
+      .chip b {
+        color: var(--ink);
+      }
+      .chip.ok b {
+        color: var(--jade);
+      }
+      .chip.no b {
+        color: var(--seal);
+      }
+
+      nav {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 4px;
+        gap: 4px;
+      }
+      nav button {
+        border: 0;
+        background: transparent;
+        color: var(--muted);
+        font: 600 14px var(--f-body);
+        padding: 9px 4px;
+        border-radius: 9px;
+        cursor: pointer;
+      }
+      nav button[aria-selected="true"] {
+        background: var(--jade);
+        color: #fff;
+      }
+
+      button,
+      input,
+      textarea,
+      select {
+        font: inherit;
+        color: inherit;
+      }
+      .btn {
+        border: 1px solid var(--line);
+        background: var(--surface);
+        color: var(--ink);
+        padding: 10px 14px;
+        border-radius: 10px;
+        font-weight: 600;
+        cursor: pointer;
+      }
+      .btn:hover {
+        border-color: var(--jade);
+      }
+      .btn.primary {
+        background: var(--jade);
+        border-color: var(--jade);
+        color: #fff;
+      }
+      .btn.danger {
+        color: var(--seal);
+      }
+      .btn.danger.armed {
+        background: var(--seal);
+        border-color: var(--seal);
+        color: #fff;
+      }
+      .btn.small {
+        padding: 6px 10px;
+        font-size: 13px;
+      }
+      :focus-visible {
+        outline: 3px solid color-mix(in srgb, var(--jade) 45%, transparent);
+        outline-offset: 2px;
+      }
+      .row {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        align-items: center;
+      }
+      .grow {
+        flex: 1 1 auto;
+      }
+
+      /* Study */
+      .controls {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+      .controls select {
+        padding: 8px 10px;
+        border-radius: 10px;
+        border: 1px solid var(--line);
+        background: var(--surface);
+      }
+      .card {
+        perspective: 1200px;
+        cursor: pointer;
+        user-select: none;
+      }
+      .card-inner {
+        position: relative;
+        min-height: 300px;
+        transition: transform 0.45s cubic-bezier(0.3, 0.7, 0.3, 1);
+        transform-style: preserve-3d;
+      }
+      .card.flipped .card-inner {
+        transform: rotateY(180deg);
+      }
+      .face {
+        position: absolute;
+        inset: 0;
+        backface-visibility: hidden;
+        -webkit-backface-visibility: hidden;
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        box-shadow: var(--shadow);
+        padding: 24px 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        text-align: center;
+        background-image: repeating-linear-gradient(to bottom, transparent 0 31px, color-mix(in srgb, var(--line) 55%, transparent) 31px 32px);
+        background-position: 0 56px;
+      }
+      .face.back {
+        transform: rotateY(180deg);
+      }
+      .face .hint {
+        position: absolute;
+        top: 12px;
+        left: 16px;
+        font-size: 11px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+      .face .stamp {
+        position: absolute;
+        top: 12px;
+        right: 14px;
+        font-size: 12px;
+        font-weight: 700;
+        padding: 2px 8px;
+        border-radius: 6px;
+        border: 2px solid currentColor;
+        transform: rotate(4deg);
+      }
+      .stamp.ok {
+        color: var(--jade);
+      }
+      .stamp.no {
+        color: var(--seal);
+      }
+      .big-hanzi {
+        font-family: var(--f-hanzi);
+        font-weight: 700;
+        font-size: clamp(56px, 18vw, 96px);
+        line-height: 1.1;
+        overflow-wrap: anywhere;
+      }
+      .big-arti {
+        font-size: clamp(24px, 6vw, 32px);
+        font-weight: 700;
+        line-height: 1.25;
+        overflow-wrap: anywhere;
+      }
+      .pinyin {
+        font-size: 22px;
+        color: var(--jade);
+        font-weight: 600;
+      }
+      .mid-hanzi {
+        font-family: var(--f-hanzi);
+        font-weight: 700;
+        font-size: 44px;
+        line-height: 1.1;
+      }
+      .arti {
+        font-size: 20px;
+        font-weight: 600;
+      }
+      .contoh {
+        font-size: 14px;
+        color: var(--muted);
+        max-width: 40ch;
+      }
+      .contoh .zh {
+        font-family: var(--f-hanzi);
+        color: var(--ink);
+        font-size: 17px;
+        display: block;
+      }
+      .speak {
+        border: 1px solid var(--line);
+        background: var(--bg);
+        border-radius: 999px;
+        width: 40px;
+        height: 40px;
+        cursor: pointer;
+        display: grid;
+        place-items: center;
+        color: var(--jade);
+      }
+      .progress {
+        display: flex;
+        justify-content: space-between;
+        color: var(--muted);
+        font-size: 13px;
+        font-variant-numeric: tabular-nums;
+      }
+      .bar {
+        height: 4px;
+        border-radius: 4px;
+        background: var(--line);
+        overflow: hidden;
+      }
+      .bar i {
+        display: block;
+        height: 100%;
+        background: var(--jade);
+        width: 0;
+        transition: width 0.3s;
+      }
+      .judge {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+      .judge .btn {
+        padding: 14px;
+        font-size: 15px;
+      }
+      .judge .no {
+        color: var(--seal);
+        border-color: color-mix(in srgb, var(--seal) 40%, var(--line));
+        background: var(--seal-soft);
+      }
+      .judge .ok {
+        color: var(--jade);
+        border-color: color-mix(in srgb, var(--jade) 40%, var(--line));
+        background: var(--jade-soft);
+      }
+      .nav-small {
+        display: flex;
+        justify-content: space-between;
+      }
+      .link {
+        background: none;
+        border: 0;
+        color: var(--muted);
+        cursor: pointer;
+        font-size: 13px;
+        padding: 4px;
+      }
+      .link:hover {
+        color: var(--ink);
+      }
+
+      .empty {
+        background: var(--surface);
+        border: 1px dashed var(--line);
+        border-radius: 16px;
+        padding: 28px 20px;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        align-items: center;
+      }
+      .empty .zh {
+        font-family: var(--f-hanzi);
+        font-size: 40px;
+        color: var(--jade);
+      }
+      .empty p {
+        margin: 0;
+        color: var(--muted);
+        max-width: 38ch;
+      }
+
+      /* Form + list */
+      .panel {
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        padding: 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+      .panel h2 {
+        font-size: 16px;
+        margin: 0;
+      }
+      .grid2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+      @media (max-width: 420px) {
+        .grid2 {
+          grid-template-columns: 1fr;
+        }
+      }
+      label {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--muted);
+        min-width: 0;
+      }
+      label small {
+        font-weight: 400;
+      }
+      input[type="text"],
+      input[type="search"],
+      textarea {
+        width: 100%;
+        padding: 10px 12px;
+        border-radius: 10px;
+        border: 1px solid var(--line);
+        background: var(--bg);
+        color: var(--ink);
+        font-weight: 400;
+      }
+      input.hz {
+        font-family: var(--f-hanzi);
+        font-size: 20px;
+      }
+      .sugg {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+      .sugg .cap {
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .sugg-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 6px;
+      }
+      .sugg button {
+        text-align: left;
+        border: 1px solid var(--line);
+        background: var(--bg);
+        border-radius: 10px;
+        padding: 7px 10px;
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        gap: 1px;
+        min-width: 0;
+      }
+      .sugg button:hover,
+      .sugg button:focus-visible {
+        border-color: var(--jade);
+        background: var(--jade-soft);
+      }
+      .sugg .s-top {
+        display: flex;
+        align-items: baseline;
+        gap: 6px;
+        flex-wrap: wrap;
+      }
+      .sugg .s-hz {
+        font-family: var(--f-hanzi);
+        font-size: 20px;
+        font-weight: 700;
+        color: var(--ink);
+      }
+      .sugg .s-py {
+        color: var(--jade);
+        font-weight: 600;
+        font-size: 13px;
+      }
+      .sugg .s-lv {
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        color: var(--muted);
+        border: 1px solid var(--line);
+        border-radius: 5px;
+        padding: 0 4px;
+      }
+      .sugg .s-en {
+        font-size: 12px;
+        color: var(--muted);
+        font-weight: 400;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .en-hint {
+        font-weight: 400;
+        font-size: 12px;
+        color: var(--muted);
+      }
+      textarea {
+        min-height: 90px;
+        resize: vertical;
+      }
+      .list {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+      .item {
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 10px 12px;
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+        gap: 12px;
+        align-items: center;
+      }
+      .item .hz {
+        font-family: var(--f-hanzi);
+        font-size: 24px;
+        font-weight: 700;
+        min-width: 2.2em;
+      }
+      .item .meta {
+        min-width: 0;
+      }
+      .item .py {
+        color: var(--jade);
+        font-weight: 600;
+        font-size: 14px;
+      }
+      .item .ar {
+        font-size: 14px;
+        overflow-wrap: anywhere;
+      }
+      .item .acts {
+        display: flex;
+        gap: 6px;
+        align-items: center;
+      }
+      .dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: var(--line);
+        border: 0;
+        cursor: pointer;
+        padding: 0;
+      }
+      .dot.ok {
+        background: var(--jade);
+      }
+      .toast {
+        position: fixed;
+        left: 50%;
+        transform: translateX(-50%);
+        bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+        background: var(--ink);
+        color: var(--bg);
+        padding: 10px 16px;
+        border-radius: 10px;
+        font-size: 14px;
+        max-width: calc(100% - 32px);
+        z-index: 9;
+      }
+      .note {
+        font-size: 13px;
+        color: var(--muted);
+        margin: 0;
+      }
+      .note.warn {
+        color: var(--seal);
+      }
+      code {
+        font-size: 12px;
+        background: var(--bg);
+        padding: 1px 5px;
+        border-radius: 5px;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .card-inner,
+        .bar i {
+          transition: none;
+        }
+      }
+      [hidden] {
+        display: none !important;
+      }
+      body {
+        margin: 0;
+      }
+      .acct-chip {
+        border: 1px solid var(--line);
+        background: var(--surface);
+        color: var(--muted);
+        border-radius: 999px;
+        padding: 6px 12px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        white-space: nowrap;
+        max-width: 46vw;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .acct-chip.on {
+        color: var(--jade);
+        border-color: color-mix(in srgb, var(--jade) 40%, var(--line));
+      }
+      .msg {
+        font-size: 13px;
+        margin: 0;
+        color: var(--muted);
+      }
+      .msg.err {
+        color: var(--seal);
+      }
+      input[type="email"],
+      input[type="password"] {
+        width: 100%;
+        padding: 10px 12px;
+        border-radius: 10px;
+        border: 1px solid var(--line);
+        background: var(--bg);
+        color: var(--ink);
+      }
+    </style>
+    <script src="config.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/dist/umd/supabase.js"></script>
+  </head>
+  <body>
+    <div class="wrap">
+      <header>
+        <div class="seal" aria-hidden="true">学</div>
+        <div class="grow">
+          <h1>Flashcard Hanzi</h1>
+          <p class="sub">Flashcard kosakata Mandarin buatan sendiri · persiapan HSK 4</p>
+        </div>
+        <button class="acct-chip" id="acct-chip" type="button">Masuk</button>
+      </header>
+      <div class="stats" id="stats"></div>
+
+      <nav role="tablist">
+        <button role="tab" id="tab-belajar" aria-selected="true" data-tab="belajar">Belajar</button>
+        <button role="tab" id="tab-kata" aria-selected="false" data-tab="kata">Daftar Kata</button>
+        <button role="tab" id="tab-simpan" aria-selected="false" data-tab="simpan">Akun</button>
+      </nav>
+
+      <!-- BELAJAR -->
+      <section id="view-belajar" class="wrap" style="padding: 0; gap: 14px">
+        <div class="controls">
+          <select id="filter" aria-label="Kartu yang dipelajari">
+            <option value="belum">Yang belum hafal</option>
+            <option value="semua">Semua kata</option>
+          </select>
+          <select id="arah" aria-label="Arah kartu">
+            <option value="hz">Depan: Hanzi</option>
+            <option value="id">Depan: Arti Indonesia</option>
+          </select>
+          <button class="btn small" id="acak">Acak ulang</button>
+        </div>
+        <div id="study"></div>
+      </section>
+
+      <!-- DAFTAR KATA -->
+      <section id="view-kata" class="wrap" style="padding: 0; gap: 14px" hidden>
+        <form class="panel" id="form" autocomplete="off">
+          <h2 id="form-title">Tambah kata baru</h2>
+          <div class="grid2">
+            <label>Pinyin <small>(ketik, lalu pilih hanzinya)</small><input type="text" id="f-pinyin" placeholder="liru atau li4ru2" autocapitalize="off" spellcheck="false" aria-controls="sugg" /></label>
+            <label>Hanzi<input type="text" id="f-hanzi" class="hz" placeholder="例如" required /></label>
+          </div>
+          <div class="sugg" id="sugg" hidden></div>
+          <label>Arti (Bahasa Indonesia)<input type="text" id="f-arti" placeholder="misalnya, contohnya" required /> <span class="en-hint" id="en-hint" hidden></span></label>
+          <label>Contoh kalimat <small>(opsional)</small><input type="text" id="f-contoh" placeholder="例如，北京、上海都是大城市。" /></label>
+          <div class="row">
+            <button class="btn primary" type="submit" id="f-submit">Tambah kata</button>
+            <button class="btn" type="button" id="f-cancel" hidden>Batal</button>
+          </div>
+        </form>
+        <div class="row">
+          <input type="search" id="cari" class="grow" placeholder="Cari hanzi, pinyin, atau arti…" aria-label="Cari kata" style="flex: 1 1 200px" />
+        </div>
+        <div class="list" id="list"></div>
+      </section>
+
+      <!-- SIMPAN -->
+      <section id="view-simpan" class="wrap" style="padding: 0; gap: 14px" hidden>
+        <div class="panel" id="acct-panel">
+          <h2 id="acct-title">Masuk ke akunmu</h2>
+          <p class="note" id="where"></p>
+          <form id="login-form" class="wrap" style="padding: 0; gap: 10px" hidden autocomplete="on">
+            <label>Email<input type="email" id="l-email" autocomplete="email" required /></label>
+            <label>Kata sandi <small>(minimal 6 karakter)</small><input type="password" id="l-pass" autocomplete="current-password" minlength="6" required /></label>
+            <div class="row">
+              <button class="btn primary" type="submit" id="l-in">Masuk</button>
+              <button class="btn" type="button" id="l-up">Daftar akun baru</button>
+            </div>
+          </form>
+          <div class="row" id="logged-in" hidden>
+            <button class="btn" type="button" id="l-out">Keluar</button>
+          </div>
+          <p class="msg" id="l-msg"></p>
+        </div>
+        <div class="panel">
+          <h2>Cadangkan (export)</h2>
+          <p class="note">Simpan semua kata ke file, supaya aman kalau ganti HP atau browser.</p>
+          <div class="row">
+            <button class="btn primary" id="exp-file">Unduh file cadangan</button>
+            <button class="btn" id="exp-copy">Salin sebagai teks</button>
+          </div>
+          <textarea id="exp-text" readonly hidden aria-label="Teks cadangan"></textarea>
+        </div>
+        <div class="panel">
+          <h2>Masukkan banyak kata sekaligus (import)</h2>
+          <p class="note">Pilih file cadangan, atau tempel daftar kata. Satu kata per baris, dipisah koma atau tab:<br /><code>汉字, pinyin, arti, contoh kalimat</code></p>
+          <input type="file" id="imp-file" accept=".json,.txt,.csv,application/json,text/plain" />
+          <textarea id="imp-text" placeholder="例如, lìrú, misalnya&#10;比较, bǐjiào, cukup; membandingkan&#10;突然, tūrán, tiba-tiba"></textarea>
+          <div class="row"><button class="btn primary" id="imp-go">Masukkan kata</button></div>
+          <p class="note" id="imp-msg"></p>
+        </div>
+      </section>
+    </div>
+    <div class="toast" id="toast" hidden></div>
+
+    <script>
+      (() => {
+        const LS_KEY = "kartu-hanzi-isna:v1";
+        const SAMPLE = [
+          ["比较", "bǐjiào", "cukup, agak; membandingkan", "今天比较冷，多穿点儿衣服。"],
+          ["突然", "tūrán", "tiba-tiba", "他突然站了起来。"],
+          ["适合", "shìhé", "cocok, sesuai", "这件衣服很适合你。"],
+          ["经验", "jīngyàn", "pengalaman", "他有很多工作经验。"],
+          ["鼓励", "gǔlì", "mendorong, menyemangati", "老师鼓励我们多说汉语。"],
+          ["准确", "zhǔnquè", "tepat, akurat", "你的发音很准确。"],
+          ["原谅", "yuánliàng", "memaafkan", "请原谅我来晚了。"],
+          ["温度", "wēndù", "suhu", "今天的温度是二十五度。"],
+        ];
+
+        let words = []; // {id, hanzi, pinyin, arti, contoh, hafal, dibuat}
+        let mode = "local"; // "local" | "cloud"
+        let deck = [],
+          pos = 0,
+          flipped = false,
+          editingId = null;
+        const $ = (s) => document.querySelector(s);
+        const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+        const newId = () => "w" + Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+
+        function toast(msg) {
+          const t = $("#toast");
+          t.textContent = msg;
+          t.hidden = false;
+          clearTimeout(toast.t);
+          toast.t = setTimeout(() => (t.hidden = true), 2600);
+        }
+
+        /* ---------- pinyin: angka -> tanda nada ---------- */
+        const MARKS = { a: "āáǎà", e: "ēéěè", i: "īíǐì", o: "ōóǒò", u: "ūúǔù", ü: "ǖǘǚǜ" };
+        function syl(s, tone) {
+          s = s.replace(/v|u:/g, "ü").replace(/V|U:/g, "Ü");
+          if (tone < 1 || tone > 4) return s;
+          const low = s.toLowerCase();
+          let idx = low.search(/[ae]/);
+          if (idx < 0) idx = low.indexOf("ou");
+          if (idx < 0) {
+            for (let k = low.length - 1; k >= 0; k--)
+              if ("aeiouü".includes(low[k])) {
+                idx = k;
+                break;
+              }
+          }
+          if (idx < 0) return s;
+          const ch = low[idx],
+            m = MARKS[ch][tone - 1];
+          return s.slice(0, idx) + (s[idx] === ch ? m : m.toUpperCase()) + s.slice(idx + 1);
+        }
+        const toMarks = (str) => str.replace(/([a-züA-ZÜ:]+)([0-5])/g, (_, s, t) => syl(s, +t));
+
+        /* ---------- storage ---------- */
+        function saveLocal() {
+          try {
+            localStorage.setItem(LS_KEY, JSON.stringify(words));
+          } catch (e) {}
+        }
+        function loadLocal() {
+          try {
+            const v = JSON.parse(localStorage.getItem(LS_KEY) || "[]");
+            return Array.isArray(v) ? v : [];
+          } catch (e) {
+            return [];
+          }
+        }
+        const CFG = window.KARTU_CONFIG || {};
+        let sb = null,
+          session = null,
+          currentUid = null;
+        const cloudConfigured = () => !!(CFG.supabaseUrl && CFG.supabaseKey && !/ISI_/.test(CFG.supabaseUrl + CFG.supabaseKey) && window.supabase);
+        const toRow = (w) => ({ id: w.id, user_id: session.user.id, hanzi: w.hanzi, pinyin: w.pinyin || "", arti: w.arti, contoh: w.contoh || "", hafal: !!w.hafal, dibuat: w.dibuat || Date.now() });
+        const fromRow = (r) => ({ id: r.id, hanzi: r.hanzi, pinyin: r.pinyin || "", arti: r.arti, contoh: r.contoh || "", hafal: !!r.hafal, dibuat: Number(r.dibuat) || 0 });
+        function syncError(e) {
+          console.error(e);
+          toast("Gagal menyimpan ke akun. Cek internet, lalu coba lagi.");
+        }
+        async function persist(w) {
+          // create or update one word
+          saveLocal();
+          if (mode !== "cloud") return;
+          const { error } = await sb.from("words").upsert(toRow(w), { onConflict: "user_id,id" });
+          if (error) syncError(error);
+        }
+        async function remove(id) {
+          saveLocal();
+          if (mode !== "cloud") return;
+          const { error } = await sb.from("words").delete().eq("id", id);
+          if (error) syncError(error);
+        }
+        async function pullCloud() {
+          const { data, error } = await sb.from("words").select("*").order("dibuat", { ascending: true });
+          if (error) throw error;
+          return data.map(fromRow);
+        }
+        async function enterCloud() {
+          try {
+            const cloud = await pullCloud();
+            const byId = new Map(cloud.map((w) => [w.id, w]));
+            const fresh = loadLocal().filter((w) => !byId.has(w.id)); // words typed before logging in
+            if (fresh.length) {
+              const { error } = await sb.from("words").upsert(fresh.map(toRow), { onConflict: "user_id,id" });
+              if (error) throw error;
+              fresh.forEach((w) => byId.set(w.id, w));
+              toast(`${fresh.length} kata dari browser ini dipindah ke akunmu`);
+            }
+            mode = "cloud";
+            words = [...byId.values()];
+            saveLocal();
+            renderWhere();
+            refresh(true);
+          } catch (e) {
+            console.error(e);
+            mode = "local";
+            renderWhere();
+            setMsg("Gagal mengambil kata dari akun. Cek internet lalu muat ulang halaman.", true);
+          }
+        }
+        function leaveCloud() {
+          mode = "local";
+          words = [];
+          saveLocal();
+          renderWhere();
+          refresh(true);
+        }
+        function startCloud() {
+          if (!cloudConfigured()) {
+            renderWhere();
+            return;
+          }
+          sb = supabase.createClient(CFG.supabaseUrl, CFG.supabaseKey);
+          sb.auth.onAuthStateChange((_event, s) => {
+            session = s;
+            const uid = s?.user?.id || null;
+            if (uid === currentUid) {
+              renderWhere();
+              return;
+            }
+            const wasIn = !!currentUid;
+            currentUid = uid;
+            // Run outside the auth callback (supabase-js recommends not awaiting inside it).
+            setTimeout(() => {
+              if (uid) enterCloud();
+              else if (wasIn) leaveCloud();
+              else renderWhere();
+            }, 0);
+          });
+          document.addEventListener("visibilitychange", async () => {
+            if (document.visibilityState !== "visible" || mode !== "cloud") return;
+            try {
+              words = await pullCloud();
+              saveLocal();
+              refresh(false);
+            } catch (e) {}
+          });
+        }
+        function setMsg(t, err) {
+          const m = $("#l-msg");
+          m.textContent = t || "";
+          m.classList.toggle("err", !!err);
+        }
+        const authErr = (e) =>
+          /invalid login/i.test(e.message)
+            ? "Email atau kata sandi salah."
+            : /already registered/i.test(e.message)
+              ? "Email ini sudah terdaftar. Coba tombol Masuk."
+              : /password/i.test(e.message)
+                ? "Kata sandi minimal 6 karakter."
+                : /email not confirmed/i.test(e.message)
+                  ? "Email belum dikonfirmasi. Cek kotak masuk emailmu."
+                  : "Gagal: " + e.message;
+
+        /* ---------- stats ---------- */
+        function renderStats() {
+          const h = words.filter((w) => w.hafal).length;
+          $("#stats").innerHTML = `<span class="chip"><b>${words.length}</b> kata</span>` + `<span class="chip ok"><b>${h}</b> sudah hafal</span>` + `<span class="chip no"><b>${words.length - h}</b> belum</span>`;
+        }
+
+        function renderWhere() {
+          const chip = $("#acct-chip"),
+            on = !!(session && session.user);
+          chip.hidden = !cloudConfigured();
+          chip.textContent = on ? session.user.email : "Masuk";
+          chip.classList.toggle("on", on);
+          $("#login-form").hidden = !cloudConfigured() || on;
+          $("#logged-in").hidden = !on;
+          $("#acct-title").textContent = on ? "Akunmu" : cloudConfigured() ? "Masuk ke akunmu" : "Penyimpanan";
+          $("#where").innerHTML = on
+            ? `Masuk sebagai <b>${esc(session.user.email)}</b>. Kata-katamu tersimpan di akun, jadi muncul di HP maupun laptop selama kamu masuk dengan email yang sama.`
+            : cloudConfigured()
+              ? "Belum masuk, jadi kata-kata disimpan di browser ini saja. Masuk atau daftar supaya kata-katamu aman dan bisa dibuka dari perangkat lain."
+              : "Kata-kata disimpan di browser ini saja. Rutin <b>unduh file cadangan</b> di bawah supaya tidak hilang.";
+        }
+
+        /* ---------- study ---------- */
+        function shuffle(a) {
+          for (let i = a.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [a[i], a[j]] = [a[j], a[i]];
+          }
+          return a;
+        }
+        function buildDeck() {
+          const f = $("#filter").value;
+          deck = shuffle(words.filter((w) => f === "semua" || !w.hafal).map((w) => w.id));
+          pos = 0;
+          flipped = false;
+        }
+        const canSpeak = "speechSynthesis" in window;
+        function speak(text) {
+          if (!canSpeak) return;
+          try {
+            speechSynthesis.cancel();
+            const u = new SpeechSynthesisUtterance(text);
+            u.lang = "zh-CN";
+            u.rate = 0.85;
+            speechSynthesis.speak(u);
+          } catch (e) {}
+        }
+        const speakBtn = (hz) =>
+          canSpeak
+            ? `<button class="speak" data-speak="${esc(hz)}" aria-label="Dengarkan pelafalan" title="Dengarkan">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5 6 9H3v6h3l5 4V5z" fill="currentColor"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"/></svg></button>`
+            : "";
+
+        function renderStudy() {
+          const el = $("#study");
+          if (!words.length) {
+            el.innerHTML = `<div class="empty"><div class="zh">你好</div>
+        <p>Belum ada kata. Tambahkan kosakata HSK 4 pilihanmu sendiri, atau coba dulu dengan 8 contoh kata.</p>
+        <div class="row" style="justify-content:center"><button class="btn primary" data-go="kata">Tambah kata pertama</button>
+        <button class="btn" id="load-sample">Coba 8 contoh kata</button></div></div>`;
+            return;
+          }
+          const live = deck.map((id) => words.find((w) => w.id === id)).filter(Boolean);
+          if (!live.length || pos >= live.length) {
+            const allDone = words.every((w) => w.hafal);
+            el.innerHTML = `<div class="empty"><div class="zh">${allDone ? "太棒了" : "完成"}</div>
+        <p>${allDone ? "Semua kata sudah hafal. Tambah kata baru, atau ulangi semua kata." : live.length ? "Satu putaran selesai. Mau ulang lagi?" : "Tidak ada kata yang belum hafal di pilihan ini."}</p>
+        <div class="row" style="justify-content:center"><button class="btn primary" id="again">Ulangi putaran</button>
+        <button class="btn" id="all-words">Belajar semua kata</button></div></div>`;
+            return;
+          }
+          const w = live[pos],
+            front = $("#arah").value;
+          const hzFace = `<div class="big-hanzi">${esc(w.hanzi)}</div>`;
+          const idFace = `<div class="big-arti">${esc(w.arti)}</div>`;
+          const stamp = w.hafal ? `<span class="stamp ok">已记住</span>` : "";
+          const backBody = `${front === "hz" ? `<div class="mid-hanzi">${esc(w.hanzi)}</div>` : `<div class="mid-hanzi">${esc(w.hanzi)}</div>`}
+        ${w.pinyin ? `<div class="pinyin">${esc(w.pinyin)}</div>` : ""}
+        <div class="arti">${esc(w.arti)}</div>
+        ${w.contoh ? `<div class="contoh"><span class="zh">${esc(w.contoh)}</span></div>` : ""}
+        ${speakBtn(w.hanzi)}`;
+          el.innerHTML = `
+      <div class="progress"><span>Kartu ${pos + 1} dari ${live.length}</span><span>${flipped ? "" : "Ketuk kartu untuk membalik"}</span></div>
+      <div class="bar" style="margin:6px 0 12px"><i style="width:${(pos / live.length) * 100}%"></i></div>
+      <div class="card ${flipped ? "flipped" : ""}" id="card" tabindex="0" role="button" aria-label="Balik kartu">
+        <div class="card-inner">
+          <div class="face front"><span class="hint">${front === "hz" ? "Apa artinya?" : "Bagaimana hanzinya?"}</span>${stamp}${front === "hz" ? hzFace : idFace}</div>
+          <div class="face back"><span class="hint">Jawaban</span>${stamp}${backBody}</div>
+        </div>
+      </div>
+      <div class="judge" style="margin-top:14px">
+        <button class="btn no" id="j-no">Belum hafal</button>
+        <button class="btn ok" id="j-ok">Sudah hafal</button>
+      </div>
+      <div class="nav-small" style="margin-top:6px">
+        <button class="link" id="prev" ${pos === 0 ? "disabled" : ""}>← Sebelumnya</button>
+        <button class="link" id="skip">Lewati →</button>
+      </div>`;
+          fitCard();
+        }
+        function fitCard() {
+          const inner = document.querySelector(".card-inner");
+          if (!inner) return;
+          const faces = inner.querySelectorAll(".face");
+          let h = 300;
+          faces.forEach((f) => {
+            f.style.position = "relative";
+            h = Math.max(h, f.offsetHeight);
+            f.style.position = "";
+          });
+          inner.style.minHeight = h + "px";
+        }
+        function flip() {
+          flipped = !flipped;
+          const c = $("#card");
+          if (c) {
+            c.classList.toggle("flipped", flipped);
+            const p = document.querySelector(".progress span:last-child");
+            if (p) p.textContent = flipped ? "" : "Ketuk kartu untuk membalik";
+          }
+        }
+        function judge(hafal) {
+          const live = deck.map((id) => words.find((w) => w.id === id)).filter(Boolean);
+          const w = live[pos];
+          if (!w) return;
+          if (w.hafal !== hafal) {
+            w.hafal = hafal;
+            persist(w);
+            renderStats();
+            renderList();
+          }
+          pos++;
+          flipped = false;
+          renderStudy();
+        }
+
+        /* ---------- list ---------- */
+        function renderList() {
+          const q = $("#cari").value.trim().toLowerCase();
+          const shown = words
+            .slice()
+            .sort((a, b) => (b.dibuat || 0) - (a.dibuat || 0))
+            .filter((w) => !q || [w.hanzi, w.pinyin, w.arti, w.contoh].join(" ").toLowerCase().includes(q));
+          $("#list").innerHTML = shown.length
+            ? shown
+                .map(
+                  (w) => `
+      <div class="item">
+        <div class="hz">${esc(w.hanzi)}</div>
+        <div class="meta"><div class="py">${esc(w.pinyin)}</div><div class="ar">${esc(w.arti)}</div></div>
+        <div class="acts">
+          <button class="dot ${w.hafal ? "ok" : ""}" data-toggle="${w.id}" title="${w.hafal ? "Sudah hafal (ketuk untuk ubah)" : "Belum hafal (ketuk untuk ubah)"}" aria-label="${w.hafal ? "Tandai belum hafal" : "Tandai sudah hafal"}"></button>
+          <button class="btn small" data-edit="${w.id}">Ubah</button>
+          <button class="btn small danger" data-del="${w.id}">Hapus</button>
+        </div>
+      </div>`,
+                )
+                .join("")
+            : `<p class="note">${words.length ? "Tidak ada kata yang cocok." : "Daftar masih kosong. Isi formulir di atas untuk menambah kata."}</p>`;
+        }
+
+        function resetForm() {
+          editingId = null;
+          $("#form").reset();
+          $("#sugg").hidden = true;
+          showEnHint("");
+          $("#form-title").textContent = "Tambah kata baru";
+          $("#f-submit").textContent = "Tambah kata";
+          $("#f-cancel").hidden = true;
+        }
+
+        function refresh(rebuild) {
+          renderStats();
+          renderList();
+          if (rebuild) buildDeck();
+          renderStudy();
+        }
+
+        function addWords(list) {
+          let n = 0;
+          for (const r of list) {
+            const hanzi = (r.hanzi || "").trim(),
+              arti = (r.arti || "").trim();
+            if (!hanzi || !arti) continue;
+            const exist = words.find((w) => w.hanzi === hanzi);
+            if (exist) {
+              Object.assign(exist, { pinyin: r.pinyin || exist.pinyin, arti, contoh: r.contoh || exist.contoh });
+              persist(exist);
+            } else {
+              const w = { id: r.id || newId(), hanzi, pinyin: toMarks((r.pinyin || "").trim()), arti, contoh: (r.contoh || "").trim(), hafal: !!r.hafal, dibuat: r.dibuat || Date.now() + n };
+              words.push(w);
+              persist(w);
+            }
+            n++;
+          }
+          return n;
+        }
+
+        /* ---------- events ---------- */
+        function showTab(name) {
+          document.querySelectorAll("nav button").forEach((b) => b.setAttribute("aria-selected", b.dataset.tab === name));
+          ["belajar", "kata", "simpan"].forEach((t) => ($("#view-" + t).hidden = t !== name));
+          if (name === "belajar") {
+            buildDeck();
+            renderStudy();
+          }
+          try {
+            localStorage.setItem(LS_KEY + ":tab", name);
+          } catch (e) {}
+        }
+        document.querySelector("nav").addEventListener("click", (e) => {
+          const b = e.target.closest("button[data-tab]");
+          if (b) showTab(b.dataset.tab);
+        });
+
+        $("#filter").addEventListener("change", () => {
+          buildDeck();
+          renderStudy();
+        });
+        $("#arah").addEventListener("change", () => {
+          flipped = false;
+          renderStudy();
+        });
+        $("#acak").addEventListener("click", () => {
+          buildDeck();
+          renderStudy();
+          toast("Kartu diacak");
+        });
+
+        $("#study").addEventListener("click", (e) => {
+          const t = e.target;
+          if (t.closest("[data-speak]")) {
+            e.stopPropagation();
+            speak(t.closest("[data-speak]").dataset.speak);
+            return;
+          }
+          if (t.closest("#card")) return flip();
+          if (t.closest("#j-ok")) return judge(true);
+          if (t.closest("#j-no")) return judge(false);
+          if (t.closest("#skip")) {
+            pos++;
+            flipped = false;
+            return renderStudy();
+          }
+          if (t.closest("#prev")) {
+            pos = Math.max(0, pos - 1);
+            flipped = false;
+            return renderStudy();
+          }
+          if (t.closest("#again")) {
+            buildDeck();
+            return renderStudy();
+          }
+          if (t.closest("#all-words")) {
+            $("#filter").value = "semua";
+            buildDeck();
+            return renderStudy();
+          }
+          if (t.closest("[data-go]")) return showTab("kata");
+          if (t.closest("#load-sample")) {
+            addWords(SAMPLE.map(([hanzi, pinyin, arti, contoh]) => ({ hanzi, pinyin, arti, contoh })));
+            refresh(true);
+            toast("8 contoh kata ditambahkan. Boleh dihapus kapan saja.");
+          }
+        });
+        document.addEventListener("keydown", (e) => {
+          if ($("#view-belajar").hidden || /input|textarea|select/i.test(e.target.tagName)) return;
+          if (e.key === " " || e.key === "Enter") {
+            if ($("#card")) {
+              e.preventDefault();
+              flip();
+            }
+          } else if (e.key === "ArrowRight") judge(true);
+          else if (e.key === "ArrowLeft") judge(false);
+        });
+        window.addEventListener("resize", fitCard);
+
+        /* ---------- kamus: pinyin -> hanzi, hanzi -> pinyin ---------- */
+        let dict = null,
+          dictLoading = null;
+        const stripTones = (s) =>
+          s
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .replace(/ü/g, "u")
+            .normalize("NFC");
+        const squash = (s) => s.toLowerCase().replace(/[\s'’·-]/g, "");
+        function numericOf(py) {
+          // "lì rú" -> "li4ru2"
+          return py
+            .toLowerCase()
+            .split(/\s+/)
+            .map((sy) => {
+              const n = sy.normalize("NFD");
+              let t = 5;
+              if (/\u0304/.test(n)) t = 1;
+              else if (/\u0301/.test(n)) t = 2;
+              else if (/\u030c/.test(n)) t = 3;
+              else if (/\u0300/.test(n)) t = 4;
+              return stripTones(sy).replace(/[^a-z]/g, "") + t;
+            })
+            .join("");
+        }
+        function loadDict() {
+          if (dict) return Promise.resolve(dict);
+          if (!dictLoading)
+            dictLoading = fetch("hsk.txt")
+              .then((r) => {
+                if (!r.ok) throw 0;
+                return r.text();
+              })
+              .then((t) => {
+                dict = t.split("\n").map((line, rank) => {
+                  const [hanzi, pinyin, lv, en] = line.split("\t");
+                  return { hanzi, pinyin, lv: +lv, en, rank, plain: squash(stripTones(pinyin)), marked: squash(pinyin), num: numericOf(pinyin) };
+                });
+                return dict;
+              })
+              .catch(() => {
+                dictLoading = null;
+                return null;
+              });
+          return dictLoading;
+        }
+        function lookup(q) {
+          q = q.trim();
+          if (!q || !dict) return [];
+          let key, field;
+          if (/[1-5]/.test(q)) {
+            key = squash(q).replace(/v|u:/g, "u");
+            field = "num";
+          } else if (/[āáǎàēéěèīíǐìōóǒòūúǔùǖǘǚǜ]/i.test(q)) {
+            key = squash(q);
+            field = "marked";
+          } else {
+            key = squash(q).replace(/v/g, "u");
+            field = "plain";
+          }
+          const exact = [],
+            pre = [];
+          for (const d of dict) {
+            const v = field === "num" ? d.num.replace(/ü/g, "u") : d[field];
+            if (v === key) exact.push(d);
+            else if (pre.length < 40 && v.startsWith(key)) pre.push(d);
+            if (exact.length >= 12) break;
+          }
+          const out = exact.concat(pre.sort((a, b) => a.plain.length - b.plain.length || a.rank - b.rank)).slice(0, 12);
+          // Wrong tone typed? Fall back to matching without tones.
+          if (!out.length && field !== "plain") return lookup(stripTones(q.replace(/[1-5]/g, "")));
+          return out;
+        }
+        const lvLabel = (lv) => (lv <= 6 ? "HSK " + lv : "HSK 7+");
+        function showEnHint(en) {
+          const h = $("#en-hint");
+          if (en) {
+            h.textContent = "Arti Inggris di kamus: " + en;
+            h.hidden = false;
+          } else h.hidden = true;
+        }
+        let suggTimer;
+        function renderSugg() {
+          const box = $("#sugg"),
+            q = $("#f-pinyin").value;
+          if (!q.trim()) {
+            box.hidden = true;
+            return;
+          }
+          loadDict().then(() => {
+            if ($("#f-pinyin").value !== q) return;
+            const res = lookup(q);
+            if (!dict) {
+              box.hidden = true;
+              return;
+            }
+            box.hidden = false;
+            box.innerHTML = res.length
+              ? `<span class="cap">Pilih hanzinya:</span><div class="sugg-list">${res
+                  .map(
+                    (d, i) => `
+            <button type="button" data-pick="${dict.indexOf(d)}">
+              <span class="s-top"><span class="s-hz">${esc(d.hanzi)}</span><span class="s-py">${esc(d.pinyin)}</span><span class="s-lv">${lvLabel(d.lv)}</span></span>
+              <span class="s-en">${esc(d.en)}</span></button>`,
+                  )
+                  .join("")}</div>`
+              : `<span class="cap">Belum ketemu di kamus HSK. Ketik hanzinya sendiri di kolom Hanzi, ya.</span>`;
+          });
+        }
+        $("#f-pinyin").addEventListener("focus", () => loadDict());
+        $("#f-pinyin").addEventListener("input", () => {
+          clearTimeout(suggTimer);
+          suggTimer = setTimeout(renderSugg, 120);
+        });
+        $("#sugg").addEventListener("click", (e) => {
+          const b = e.target.closest("[data-pick]");
+          if (!b || !dict) return;
+          const d = dict[+b.dataset.pick];
+          $("#f-hanzi").value = d.hanzi;
+          $("#f-pinyin").value = d.pinyin;
+          $("#sugg").hidden = true;
+          showEnHint(d.en);
+          $("#f-arti").focus();
+        });
+        // Typing hanzi directly fills the pinyin when it is still empty.
+        $("#f-hanzi").addEventListener("change", async () => {
+          const hz = $("#f-hanzi").value.trim();
+          if (!hz) return;
+          await loadDict();
+          if (!dict) return;
+          const d = dict.find((x) => x.hanzi === hz);
+          if (!d) return;
+          if (!$("#f-pinyin").value.trim()) $("#f-pinyin").value = d.pinyin;
+          showEnHint(d.en);
+        });
+
+        $("#f-pinyin").addEventListener("blur", (e) => {
+          e.target.value = toMarks(e.target.value);
+        });
+        $("#form").addEventListener("submit", (e) => {
+          e.preventDefault();
+          const data = { hanzi: $("#f-hanzi").value.trim(), pinyin: toMarks($("#f-pinyin").value.trim()), arti: $("#f-arti").value.trim(), contoh: $("#f-contoh").value.trim() };
+          if (!data.hanzi || !data.arti) return;
+          if (editingId) {
+            const w = words.find((x) => x.id === editingId);
+            if (w) {
+              Object.assign(w, data);
+              persist(w);
+              toast("Kata diperbarui");
+            }
+          } else {
+            const w = { id: newId(), ...data, hafal: false, dibuat: Date.now() };
+            words.push(w);
+            persist(w);
+            toast(`${data.hanzi} ditambahkan`);
+          }
+          resetForm();
+          refresh(true);
+          $("#f-pinyin").focus();
+        });
+        $("#f-cancel").addEventListener("click", resetForm);
+        $("#cari").addEventListener("input", renderList);
+
+        $("#list").addEventListener("click", (e) => {
+          const ed = e.target.closest("[data-edit]"),
+            del = e.target.closest("[data-del]"),
+            tg = e.target.closest("[data-toggle]");
+          if (tg) {
+            const w = words.find((x) => x.id === tg.dataset.toggle);
+            if (w) {
+              w.hafal = !w.hafal;
+              persist(w);
+              refresh(false);
+            }
+          }
+          if (ed) {
+            const w = words.find((x) => x.id === ed.dataset.edit);
+            if (!w) return;
+            editingId = w.id;
+            $("#f-hanzi").value = w.hanzi;
+            $("#f-pinyin").value = w.pinyin;
+            $("#f-arti").value = w.arti;
+            $("#f-contoh").value = w.contoh || "";
+            $("#form-title").textContent = "Ubah kata";
+            $("#f-submit").textContent = "Simpan perubahan";
+            $("#f-cancel").hidden = false;
+            $("#form").scrollIntoView({ behavior: "smooth", block: "start" });
+            $("#f-hanzi").focus({ preventScroll: true });
+          }
+          if (del) {
+            if (!del.classList.contains("armed")) {
+              del.classList.add("armed");
+              del.textContent = "Yakin?";
+              setTimeout(() => {
+                if (del.isConnected) {
+                  del.classList.remove("armed");
+                  del.textContent = "Hapus";
+                }
+              }, 3000);
+              return;
+            }
+            const id = del.dataset.del,
+              w = words.find((x) => x.id === id);
+            words = words.filter((x) => x.id !== id);
+            remove(id);
+            if (editingId === id) resetForm();
+            refresh(false);
+            toast(`${w ? w.hanzi : "Kata"} dihapus`);
+          }
+        });
+
+        /* ---------- export / import ---------- */
+        const backupJSON = () => JSON.stringify({ aplikasi: "Kartu Hanzi", versi: 1, tanggal: new Date().toISOString(), kata: words }, null, 2);
+        $("#exp-file").addEventListener("click", async () => {
+          if (!words.length) return toast("Belum ada kata untuk dicadangkan");
+          const name = "kartu-hanzi-" + new Date().toISOString().slice(0, 10) + ".json";
+          const url = URL.createObjectURL(new Blob([backupJSON()], { type: "application/json" }));
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = name;
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+          setTimeout(() => URL.revokeObjectURL(url), 2000);
+          toast("File cadangan diunduh");
+        });
+        $("#exp-copy").addEventListener("click", () => {
+          const ta = $("#exp-text");
+          ta.value = backupJSON();
+          ta.hidden = false;
+          navigator.clipboard?.writeText(ta.value).then(
+            () => toast("Teks cadangan disalin"),
+            () => {
+              ta.select();
+              toast("Pilih semua teks lalu salin");
+            },
+          ) ?? (ta.select(), toast("Pilih semua teks lalu salin"));
+        });
+
+        function parseImport(text) {
+          text = text.trim();
+          if (!text) return [];
+          if (text.startsWith("{") || text.startsWith("[")) {
+            try {
+              const j = JSON.parse(text);
+              const arr = Array.isArray(j) ? j : j.kata;
+              if (Array.isArray(arr)) return arr;
+            } catch (e) {}
+          }
+          return text
+            .split(/\r?\n/)
+            .map((line) => {
+              const parts = line.split(line.includes("\t") ? "\t" : /[,，]/).map((s) => s.trim());
+              if (parts.length < 2) return null;
+              if (parts.length === 2) return { hanzi: parts[0], arti: parts[1] };
+              return { hanzi: parts[0], pinyin: parts[1], arti: parts[2], contoh: parts.slice(3).join(", ") };
+            })
+            .filter(Boolean);
+        }
+        function doImport(text) {
+          const n = addWords(parseImport(text));
+          $("#imp-msg").textContent = n ? `${n} kata berhasil dimasukkan.` : "Tidak ada kata yang terbaca. Cek formatnya: hanzi, pinyin, arti.";
+          if (n) {
+            refresh(true);
+            toast(`${n} kata dimasukkan`);
+          }
+        }
+        $("#imp-go").addEventListener("click", () => {
+          doImport($("#imp-text").value);
+          if ($("#imp-msg").textContent.includes("berhasil")) $("#imp-text").value = "";
+        });
+        $("#imp-file").addEventListener("change", (e) => {
+          const f = e.target.files[0];
+          if (!f) return;
+          const r = new FileReader();
+          r.onload = () => {
+            doImport(String(r.result));
+            e.target.value = "";
+          };
+          r.readAsText(f);
+        });
+
+        /* ---------- login ---------- */
+        $("#acct-chip").addEventListener("click", () => showTab("simpan"));
+        $("#login-form").addEventListener("submit", async (e) => {
+          e.preventDefault();
+          setMsg("Sedang masuk…");
+          const { error } = await sb.auth.signInWithPassword({ email: $("#l-email").value.trim(), password: $("#l-pass").value });
+          if (error) return setMsg(authErr(error), true);
+          setMsg("");
+          $("#l-pass").value = "";
+          toast("Berhasil masuk");
+        });
+        $("#l-up").addEventListener("click", async () => {
+          const email = $("#l-email").value.trim(),
+            password = $("#l-pass").value;
+          if (!email || password.length < 6) return setMsg("Isi email dan kata sandi (minimal 6 karakter) dulu.", true);
+          setMsg("Sedang mendaftar…");
+          const { data, error } = await sb.auth.signUp({ email, password });
+          if (error) return setMsg(authErr(error), true);
+          $("#l-pass").value = "";
+          if (!data.session) setMsg("Akun dibuat! Cek emailmu dan klik link konfirmasi, lalu kembali ke sini untuk masuk.");
+          else {
+            setMsg("");
+            toast("Akun dibuat, kamu sudah masuk");
+          }
+        });
+        $("#l-out").addEventListener("click", async () => {
+          await sb.auth.signOut();
+          toast("Kamu sudah keluar");
+        });
+
+        /* ---------- start ---------- */
+        words = loadLocal();
+        renderWhere();
+        refresh(true);
+        try {
+          const t = localStorage.getItem(LS_KEY + ":tab");
+          if (t && t !== "belajar") showTab(t);
+        } catch (e) {}
+        startCloud();
+      })();
+    </script>
+  </body>
+</html>
